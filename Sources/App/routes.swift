@@ -1,6 +1,8 @@
 import Vapor
 
 func routes(_ app: Application) throws {
+    
+    app.middleware.use(LogMiddleware())
     try app.register(collection: APIController())
     
     app.get("movies"){ req async in
@@ -14,6 +16,13 @@ func routes(_ app: Application) throws {
         return movie
     }
     
+    
+    app.grouped(AuthenticationMiddleware()).group("members") { route in
+        
+        route.get(){ req async -> String in
+            return "Members"
+        }
+    }
     
     // Query Strings
     // http://127.0.0.1:8080/hotels?sort=asc&search=houston
